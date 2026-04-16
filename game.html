@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submarine Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1 id="title-of-game">Submarine Game</h1>
+    <div id="game-board"></div>
+    <script src="game.js"></script>
+    
+    <br></br>
+
+    <div id="status-bar" style="text-align: center; margin-bottom: 100px;">
+            <span>Rounds: <strong id="rounds-text">0</strong></span> | 
+            <span>Fuel: <strong id="fuel-text">10</strong></span> | 
+            <span>Player Score: <strong id="player-score">0</strong></span> | 
+            <span>Computer Score: <strong id="cpu-score">0</strong></span>
+    </div>
+
+    <div id="controls" style="text-align: center; margin-bottom: 10px;">
+        <button id="button-end-setup">Finish setup!</button>
+        <button id="button-end-play" style="display: none;">End game!</button>
+    </div>
+
+    <p id="message-box" style="color: red; font-weight: bold; text-align: center; height: 20px;"></p>
+
+</body>
+</html>
