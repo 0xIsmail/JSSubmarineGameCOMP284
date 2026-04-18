@@ -127,61 +127,62 @@ document.addEventListener("keydown", function (event) {
     }
     //During playing phase
   } else if (currentStage === "play") {
-    if (key === "w") {
-      let targetCell = userSubmarineLocation - 10;
-      if (userSubmarineLocation < 10) {
-        messageBox.innerText = "Can't go further up!";
-      } else if (gridData[targetCell] === "o") {
-        messageBox.innerText = "Obstacle ahead! Can't go further up!";
-      } else {
-        playerFuel = playerFuel - 1;
-        messageBox.innerText = "";
-        gridData[userSubmarineLocation] = "";
-        userSubmarineLocation = targetCell;
-        gridData[userSubmarineLocation] = "u";
-      }
-    } else if (key === "a") {
-      let targetCell = userSubmarineLocation - 1;
-      if (userSubmarineLocation % 10 === 0) {
-        messageBox.innerText = "Can't go further left!";
-      } else if (gridData[targetCell] === "o") {
-        messageBox.innerText = "Obstacle ahead! Can't go further left!";
-      } else {
-        playerFuel = playerFuel - 1;
-        messageBox.innerText = "";
-        gridData[userSubmarineLocation] = "";
-        userSubmarineLocation = targetCell;
-        gridData[userSubmarineLocation] = "u";
-      }
-    } else if (key === "s") {
-      let targetCell = userSubmarineLocation + 10;
-      if (userSubmarineLocation >= 90) {
-        messageBox.innerText = "Can't go further down!";
-      } else if (gridData[targetCell] === "o") {
-        messageBox.innerText = "Obstacle ahead! Can't go further down!";
-      } else {
-        playerFuel = playerFuel - 1;
-        messageBox.innerText = "";
-        gridData[userSubmarineLocation] = "";
-        userSubmarineLocation = targetCell;
-        gridData[userSubmarineLocation] = "u";
-      }
-    } else if (key === "d") {
-      let targetCell = userSubmarineLocation + 1;
-      if (userSubmarineLocation % 10 === 9) {
-        messageBox.innerText = "Can't go further right!";
-      } else if (gridData[targetCell] === "o") {
-        messageBox.innerText = "Obstacle ahead! Can't go further right!";
-      } else {
-        playerFuel = playerFuel - 1;
+        
+        if (playerFuel <= 0) {
+        messageBox.innerText = "Out of fuel! You cannot move anymore.";
+        return;
+        }
 
-        messageBox.innerText = "";
-        gridData[userSubmarineLocation] = "";
-        userSubmarineLocation = targetCell;
-        gridData[userSubmarineLocation] = "u";
-      }
+        let targetCell = null;
+
+        if (key === "w") {
+        let targetCell = userSubmarineLocation - 10;
+        if (userSubmarineLocation < 10) {
+            messageBox.innerText = "Can't go further up!";
+        } 
+        } else if (key === "a") {
+        let targetCell = userSubmarineLocation - 1;
+        if (userSubmarineLocation % 10 === 0) {
+            messageBox.innerText = "Can't go further left!";
+        } 
+        } else if (key === "s") {
+        let targetCell = userSubmarineLocation + 10;
+        if (userSubmarineLocation >= 90) {
+            messageBox.innerText = "Can't go further down!";
+        } 
+        } else if (key === "d") {
+        let targetCell = userSubmarineLocation + 1;
+        if (userSubmarineLocation % 10 === 9) {
+            messageBox.innerText = "Can't go further right!";
+        } 
+        }
+
+        if (targetCell !== null){
+            let objectInCell = gridData[targetCell]
+            if (objectInCell === "o") {
+                messageBox.innerText = "Obstacle ahead!";
+        } else if (objectInCell === "k") {
+            messageBox.innerText = "You collided with a killer robot! Game Over!";
+            currentStage = "end"; 
+        } else {
+            messageBox.innerText = "";
+            playerFuel -= 1;
+
+            if (["5", "6", "7", "8", "9"].includes(objectInCell)) {
+                let fuelValue = parseInt(objectInCell);
+                playerFuel += fuelValue;
+                playerScore += fuelValue;
+                console.log("Ate fuel worth " + fuelValue + "!");
+            }
+
+            gridData[userSubmarineLocation] = ""; // Delete old 'u'
+            userSubmarineLocation = targetCell;   // Update tracker
+            gridData[userSubmarineLocation] = "u"; // Put new 'u'
+        }
+
+        
     }
-  }
+
   document.getElementById("fuel-text").innerText = playerFuel;
   document.getElementById("player-score").innerText = playerScore;
 
