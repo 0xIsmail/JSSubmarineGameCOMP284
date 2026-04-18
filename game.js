@@ -127,64 +127,70 @@ document.addEventListener("keydown", function (event) {
     }
     //During playing phase
   } else if (currentStage === "play") {
-        
-        if (playerFuel <= 0) {
-        messageBox.innerText = "Out of fuel! You cannot move anymore.";
-        return;
-        }
-
-        let targetCell = null;
-
-        if (key === "w") {
-        let targetCell = userSubmarineLocation - 10;
-        if (userSubmarineLocation < 10) {
-            messageBox.innerText = "Can't go further up!";
-        } 
-        } else if (key === "a") {
-        let targetCell = userSubmarineLocation - 1;
-        if (userSubmarineLocation % 10 === 0) {
-            messageBox.innerText = "Can't go further left!";
-        } 
-        } else if (key === "s") {
-        let targetCell = userSubmarineLocation + 10;
-        if (userSubmarineLocation >= 90) {
-            messageBox.innerText = "Can't go further down!";
-        } 
-        } else if (key === "d") {
-        let targetCell = userSubmarineLocation + 1;
-        if (userSubmarineLocation % 10 === 9) {
-            messageBox.innerText = "Can't go further right!";
-        } 
-        }
-
-        if (targetCell !== null){
-            let objectInCell = gridData[targetCell]
-            if (objectInCell === "o") {
-                messageBox.innerText = "Obstacle ahead!";
-        } else if (objectInCell === "k") {
-            messageBox.innerText = "You collided with a killer robot! Game Over!";
-            currentStage = "end"; 
-        } else {
-            messageBox.innerText = "";
-            playerFuel -= 1;
-
-            if (["5", "6", "7", "8", "9"].includes(objectInCell)) {
-                let fuelValue = parseInt(objectInCell);
-                playerFuel += fuelValue;
-                playerScore += fuelValue;
-                console.log("Ate fuel worth " + fuelValue + "!");
-            }
-
-            gridData[userSubmarineLocation] = ""; // Delete old 'u'
-            userSubmarineLocation = targetCell;   // Update tracker
-            gridData[userSubmarineLocation] = "u"; // Put new 'u'
-        }
-
-        
+    if (playerFuel <= 0) {
+      messageBox.innerText = "Out of fuel! You cannot move anymore!";
+      return;
     }
+
+    let targetCell = null;
+    let errorMsg = "";
+
+    if (key === "w") {
+      if (userSubmarineLocation < 10) {
+        errorMsg = "Can't go further up!";
+      } else {
+        targetCell = userSubmarineLocation - 10;
+      }
+    } else if (key === "a") {
+      if (userSubmarineLocation % 10 === 0) {
+        errorMsg = "Can't go further left!";
+      } else {
+        targetCell = userSubmarineLocation - 1;
+      }
+    } else if (key === "s") {
+      if (userSubmarineLocation >= 90) {
+        errorMsg = "Can't go further down!";
+      } else {
+        targetCell = userSubmarineLocation + 10;
+      }
+    } else if (key === "d") {
+      if (userSubmarineLocation % 10 === 9) {
+        errorMsg = "Can't go further right!";
+      } else {
+        targetCell = userSubmarineLocation + 1;
+      }
+    }
+
+    // Handling our target cell move
+    if (errorMsg !== "") {
+      messageBox.innerText = errorMsg;
+    } else if (targetCell !== null) {
+      let objectInCell = gridData[targetCell];
+
+      if (objectInCell === "o") {
+        messageBox.innerText =
+          "Obstacle ahead! Cannot continue in that direction!";
+      } else if (objectInCell === "k") {
+        messageBox.innerText = "You collided with a killer robot! Game Over!";
+        currentStage = "end";
+      } else {
+        messageBox.innerText = "";
+        playerFuel -= 1;
+        if (["5", "6", "7", "8", "9"].includes(objectInCell)) {
+          let fuelValue = parseInt(objectInCell);
+          playerFuel += fuelValue;
+          playerScore += fuelValue;
+          console.log("Ate fuel worth " + fuelValue + "!");
+        }
+        gridData[userSubmarineLocation] = "";
+        userSubmarineLocation = targetCell;
+        gridData[userSubmarineLocation] = "u";
+      }
+    }
+  }
 
   document.getElementById("fuel-text").innerText = playerFuel;
   document.getElementById("player-score").innerText = playerScore;
-
+  // Redraw the board
   renderBoard();
 });
